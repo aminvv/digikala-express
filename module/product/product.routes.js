@@ -6,4 +6,6 @@ const router=Router()
 
 router.post('/create-product',createProductValidation,createProduct)
 
-
+module.exports={
+    ProductRoute:router
+}

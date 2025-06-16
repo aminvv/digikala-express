@@ -1,15 +1,15 @@
-const { product, productDetail, productColor, productSize } = require("../module/product/model/product.model");
+const { Product, ProductDetail, ProductColor, ProductSize } = require("../module/product/model/product.model");
 const sequelize = require("./sequelize.config");
 
 async function initDataBase() {
-    product.hasMany(productDetail, { foreignKey: "productId", sourceKey: "id",  as: "details" });
-    productDetail.belongsTo(product, { foreignKey: "productId", targetKey: "id" });
+    Product.hasMany(ProductDetail, { foreignKey: "productId", sourceKey: "id",  as: "details" });
+    ProductDetail.belongsTo(Product, { foreignKey: "productId", targetKey: "id" });
 
-    product.hasMany(productColor, { foreignKey: "productId", sourceKey: "id",  as: "colors" });
-    productColor.belongsTo(product, { foreignKey: "productId", targetKey: "id" });
+    Product.hasMany(ProductColor, { foreignKey: "productId", sourceKey: "id",  as: "colors" });
+    ProductColor.belongsTo(Product, { foreignKey: "productId", targetKey: "id" });
 
-    product.hasMany(productSize, { foreignKey: "productId", sourceKey: "id",  as: "sizes" });
-    productSize.belongsTo(product, { foreignKey: "productId", targetKey: "id" });
+    Product.hasMany(ProductSize, { foreignKey: "productId", sourceKey: "id",  as: "sizes" });
+    ProductSize.belongsTo(Product, { foreignKey: "productId", targetKey: "id" });
 
 
     await sequelize.sync({ alter: true })
@@ -17,4 +17,4 @@ async function initDataBase() {
 }
 
 
-module.exports = initDataBase  
+module.exports = initDataBase   

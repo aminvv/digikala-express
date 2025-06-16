@@ -36,10 +36,10 @@ async function createProduct(req, res, next) {
         if (details && Array.isArray(details)) {
             let detailList = []
             for (const item of details) {
-                details.push({
+                detailList.push({
                     key: item.key,
                     value: item.value,
-                    productId: item.productId,
+                    productId: product.id,
                 })
             }
             if (detailList.length > 0) {
@@ -47,14 +47,16 @@ async function createProduct(req, res, next) {
             }
         }
 
+        
         if (type == ProductType.Coloring) {
             let colorList = []
+            console.log(colorList);
             if (colors && Array.isArray(colors)) {
                 for (const item of colors) {
                     colorList.push({
                         color_name: item.name,
                         color_code: item.code,
-                        productId: item.productId,
+                        productId: product.id,
                         count: item.count,
                         price: item.price,
                         discount: item.discount,
@@ -63,7 +65,7 @@ async function createProduct(req, res, next) {
                 }
 
                 if (colorList.length > 0) {
-                    await ProductColor.bulkCreate(colorList)
+                    await ProductColor.bulkCreate(colorList) 
                 }
             }
         }
@@ -75,7 +77,7 @@ async function createProduct(req, res, next) {
                 for (const item of sizes) {
                     sizesList.push({
                         size: item.size,
-                        productId: item.productId,
+                        productId: product.id,
                         count: item.count,
                         price: item.price,
                         discount: item.discount,
@@ -88,7 +90,9 @@ async function createProduct(req, res, next) {
             }
         }
 
-
+        return res.json({
+            message:"create product successfully"
+        })
 
     } catch (error) {
         next(error)
@@ -98,4 +102,4 @@ async function createProduct(req, res, next) {
 
 module.exports={
     createProduct
-}
+}  

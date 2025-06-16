@@ -3,6 +3,7 @@ const { config } = require('dotenv')
 const sequelize = require('./config/sequelize.config')
 const { ErrorHandel, ErrorNotFound } = require('./common/errorHandel/errorHandling')
 const initDataBase = require('./config/model.initial')
+const {ProductRoute} = require('./module/product/product.routes')
 
 
 
@@ -12,10 +13,10 @@ require('./module/product/model/product.model')
 config()
 async function main() {
     await initDataBase()
-    await sequelize.sync({force:true})
     const app = express()
-    app.use(express.json)
-    app.use(express.urlencoded)
+    app.use(express.json())
+    app.use(express.urlencoded({ extended: true }))
+    app.use('/product',ProductRoute)
 
 
 

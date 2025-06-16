@@ -20,16 +20,21 @@ function ErrorNotFound(app) {
 
 function ErrorHandel(app) {
     app.use((err, req, res, next) => {
-        return res.json({
-            statusCode: res.statusCode || 500,
-            message: (err.message || "internal server error")
+        const status = err?.status ?? err?.statusCode ?? 500
+        let message = err.message ?? "internal server error"
+        if (err?.name == "ValidationError") {
+            const { details } = err
+            message = details?.body?.[0]?.message ?? "internal server error"
+        }
+        return res.status(status).json({
+            message, 
         })
     })
 }
 
 
 
-module.exports={
+module.exports = {
     ErrorHandel,
     ErrorNotFound
 }
