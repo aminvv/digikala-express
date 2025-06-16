@@ -1,6 +1,9 @@
 const createHttpError = require('http-errors')
 const { ProductType } = require('../../common/constant/product.constant')
 const { Product, ProductDetail, ProductColor, ProductSize } = require('./model/product.model')
+
+
+
 async function createProduct(req, res, next) {
     try {
 
@@ -100,6 +103,40 @@ async function createProduct(req, res, next) {
 }
 
 
+async  function getProduct(req,res,next){
+    try {
+        const products=await Product.findAll({})
+        return res.json({
+            products
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
+
+async  function getProductById(req,res,next){
+    try {
+        const{id}=req.params
+        const product=await Product.findOne({
+            where:{id},
+            include:[
+                {model:ProductDetail,as:"details"},
+                {model:ProductColor,as:"colors"},
+                {model:ProductSize,as:"sizes"},
+            ]
+        })
+        if(!product)throw createHttpError(404,"not found product")
+        return res.json({
+            product
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
 module.exports={
-    createProduct
+    createProduct,
+    getProduct,
+    getProductById,
 }  
