@@ -19,6 +19,4 @@ sequelize.authenticate().then(async()=>{
 })
 
 
-module.exports={
-    sequelize
-}
+module.exports=sequelize
