@@ -5,7 +5,7 @@ const { DataTypes } = require("@sequelize/core");
 
 
 
-const product = sequelize.define('product', {
+const Product = sequelize.define('product', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     title: { type: DataTypes.STRING},
     price: { type: DataTypes.DECIMAL(10,2), allowNull: true },
@@ -23,7 +23,7 @@ const product = sequelize.define('product', {
 
 
 
-const productDetail = sequelize.define('product_detail', {
+const ProductDetail = sequelize.define('product_detail', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     key: { type: DataTypes.STRING, },
     value: { type: DataTypes.STRING, },
@@ -35,7 +35,7 @@ const productDetail = sequelize.define('product_detail', {
 
 
 
-const productColor = sequelize.define('product_color', {
+const ProductColor = sequelize.define('product_color', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     color_name: { type: DataTypes.STRING, },
     color_code: { type: DataTypes.STRING, },
@@ -54,7 +54,7 @@ const productColor = sequelize.define('product_color', {
 
 
 
-const productSize = sequelize.define('product_size', {
+const ProductSize = sequelize.define('product_size', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     size: { type: DataTypes.STRING, },
     productId: { type: DataTypes.INTEGER, references: { model: product, key: "id" }, allowNull: false },
@@ -73,8 +73,8 @@ const productSize = sequelize.define('product_size', {
 
 
 module.exports={
-    product,
-    productDetail,
-    productColor,
-    productSize
+    Product,
+    ProductDetail,
+    ProductColor,
+    ProductSize
 } 
