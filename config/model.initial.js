@@ -14,7 +14,6 @@ async function initDataBase() {
 
 
     User.hasOne(Otp,{foreignKey:"userId" ,sourceKey:"id" ,as:"otp"})
-    Otp.hasOne(User,{foreignKey:"otpId" ,sourceKey:"id" ,as:"otp"})
     Otp.belongsTo(User,{foreignKey:"userId" ,targetKey:"id" })
 
     await sequelize.sync({ alter: true })
@@ -22,4 +21,4 @@ async function initDataBase() {
 }
 
 
-module.exports = initDataBase   
+module.exports = initDataBase     

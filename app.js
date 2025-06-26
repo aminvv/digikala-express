@@ -4,6 +4,7 @@ const sequelize = require('./config/sequelize.config')
 const { ErrorHandel, ErrorNotFound } = require('./common/errorHandel/errorHandling')
 const initDataBase = require('./config/model.initial')
 const {ProductRoute} = require('./module/product/product.routes')
+const {authRoute} = require('./module/auth/auth.routes')
 
 
 
@@ -16,6 +17,7 @@ async function main() {
     const app = express()
     app.use(express.json())
     app.use(express.urlencoded({ extended: true }))
+    app.use('/auth',authRoute)
     app.use('/product',ProductRoute)
 
 
