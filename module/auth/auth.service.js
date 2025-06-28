@@ -77,7 +77,28 @@ async function checkOtp(req, res, next) {
 }
 
 
-function generateToken(payload) {
+async function verifiedRefreshToken(req, res, next) {
+try {
+        const {refreshToken} = req.body
+    if (!refreshToken) throw createHttpError(401, " login on your account ")
+    const verified = jwt.verify(refreshToken, process.env.REFRESH_TOKEN)
+    if (!verified) throw createHttpError(401, " login on your account ")
+    if (verified?.userId) {
+        const user = await User.findByPk(verified?.userId)
+        if (!user) throw createHttpError(401, " login on your account ")
+        const { AccessToken, RefreshToken } =await  generateToken({ userId: user.id })
+    return res.json({
+        AccessToken,
+        RefreshToken
+    })
+    }
+} catch (error) {
+    next( createHttpError(401, " login on your account "))
+}
+}
+
+
+async function generateToken(payload) {
     const AccessToken = jwt.sign(payload,
         process.env.ACCESS_TOKEN, {
         expiresIn: "1d"
@@ -99,4 +120,5 @@ function generateToken(payload) {
 module.exports = {
     sendOtp,
     checkOtp,
+    verifiedRefreshToken,
 }
