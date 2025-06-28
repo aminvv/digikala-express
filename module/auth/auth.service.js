@@ -1,7 +1,8 @@
 const createHttpError = require("http-errors");
-const { model } = require("../../config/sequelize.config");
-const { User, Otp } = require("../user/model/user.model")
-
+const { User, Otp } = require("../user/model/user.model");
+const { config } = require("dotenv");
+const jwt = require("jsonwebtoken");
+config()
 async function sendOtp(req, res, next) {
     try {
         const { mobile } = req.body;
@@ -55,8 +56,6 @@ async function checkOtp(req, res, next) {
     try {
 
         const { mobile, code } = req.body
-        console.log("'mobile'++++++>>>>" ,mobile);
-        console.log("'code'++++++>>>>" ,code);
         const user = await User.findOne({
             where: { mobile },
             include: [
@@ -65,14 +64,36 @@ async function checkOtp(req, res, next) {
         })
 
         if (!user) throw createHttpError(401, 'not found  user account')
-        if(user?.otp?.code!==code) throw createHttpError(401 ,"otp code is invalid")    
-        if(user?.otp?.expires_in > new Date()) throw createHttpError(401 ," otp code  is expired")    
-             return res.json({
-            message:" logged in successfully "})
+        if (user?.otp?.code !== code) throw createHttpError(401, "otp code is invalid")
+        if (user?.otp?.expires_in > new Date()) throw createHttpError(401, " otp code  is expired")
+        const token = generateToken({ userId: user.id })
+        return res.json({
+            message: " logged in successfully ",
+            token,
+        })
     } catch (error) {
         next(error)
     }
 }
+
+
+function generateToken(payload) {
+    const AccessToken = jwt.sign(payload,
+        process.env.ACCESS_TOKEN, {
+        expiresIn: "1d"
+    })
+
+
+    const RefreshToken = jwt.sign(payload,
+        process.env.REFRESH_TOKEN, {
+        expiresIn: "7d"
+    })
+    return {
+        AccessToken,
+        RefreshToken
+    }
+}
+
 
 
 module.exports = {
