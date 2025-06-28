@@ -66,11 +66,16 @@ async function checkOtp(req, res, next) {
 
         if (!user) throw createHttpError(401, 'not found  user account')
         if (user?.otp?.code !== code) throw createHttpError(401, "otp code is invalid")
-        if (user?.otp?.expires_in > new Date()) throw createHttpError(401, " otp code  is expired")
-        const token = generateToken({ userId: user.id })
+        if (user?.otp?.expires_in < new Date()) throw createHttpError(401, " otp code  is expired")
+        const {accessToken,refreshToken} = await generateToken({ userId: user.id })
+    console.log(
+        "accessToken",accessToken,
+        "refreshToken",refreshToken
+    );
         return res.json({
             message: " logged in successfully ",
-            token,
+            accessToken,
+            refreshToken
         })
     } catch (error) {
         next(error)
@@ -112,20 +117,13 @@ async function verifiedRefreshToken(req, res, next) {
 
 
 async function generateToken(payload) {
-    const AccessToken = jwt.sign(payload,
-        process.env.ACCESS_TOKEN, {
-        expiresIn: "1d"
-    })
+    const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN, { expiresIn: "1d" });
+    const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN, { expiresIn: "7d" });
 
-
-    const RefreshToken = jwt.sign(payload,
-        process.env.REFRESH_TOKEN, {
-        expiresIn: "7d"
-    })
     return {
-        AccessToken,
-        RefreshToken
-    }
+        accessToken,
+        refreshToken
+    };
 }
 
 
