@@ -1,5 +1,6 @@
 const createHttpError = require("http-errors");
 const { User, Otp } = require("../user/model/user.model");
+const { RefreshTokenModel } = require("../user/model/refresh_token.model");
 const { config } = require("dotenv");
 const jwt = require("jsonwebtoken");
 config()
@@ -78,23 +79,35 @@ async function checkOtp(req, res, next) {
 
 
 async function verifiedRefreshToken(req, res, next) {
-try {
-        const {refreshToken} = req.body
-    if (!refreshToken) throw createHttpError(401, " login on your account ")
-    const verified = jwt.verify(refreshToken, process.env.REFRESH_TOKEN)
-    if (!verified) throw createHttpError(401, " login on your account ")
-    if (verified?.userId) {
-        const user = await User.findByPk(verified?.userId)
-        if (!user) throw createHttpError(401, " login on your account ")
-        const { AccessToken, RefreshToken } =await  generateToken({ userId: user.id })
-    return res.json({
-        AccessToken,
-        RefreshToken
-    })
+    try {
+        const { refreshToken:token } = req.body
+        if (!token) throw createHttpError(401, " login on your account ")
+
+            
+        const verified = jwt.verify(token, process.env.REFRESH_TOKEN)
+        if (!verified) throw createHttpError(401, " login on your account ")
+
+
+        if (verified?.userId) {
+            const user = await User.findByPk(verified?.userId)
+            if (!user) throw createHttpError(401, " login on your account ")
+            const existToken = await RefreshTokenModel.findOne({
+                where: { token }
+            })
+            if (existToken) throw createHttpError(401, "token expires")
+            await RefreshTokenModel.create({
+                token,
+                userId: user.id
+            })
+            const { AccessToken, RefreshToken } = await generateToken({ userId: user.id })
+            return res.json({
+                AccessToken,
+                RefreshToken
+            })
+        }
+    } catch (error) {
+        next(error)
     }
-} catch (error) {
-    next( createHttpError(401, " login on your account "))
-}
 }
 
 
