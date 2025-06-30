@@ -66,7 +66,7 @@ async function checkOtp(req, res, next) {
 
         if (!user) throw createHttpError(401, 'not found  user account')
         if (user?.otp?.code !== code) throw createHttpError(401, "otp code is invalid")
-        if (user?.otp?.expires_in < new Date()) throw createHttpError(401, " otp code  is expired")
+        if (user?.otp?.expires_in > new Date(Date())) throw createHttpError(401, " otp code  is expired")
         const {accessToken,refreshToken} = await generateToken({ userId: user.id })
     console.log(
         "accessToken",accessToken,
