@@ -6,6 +6,7 @@ const initDataBase = require('./config/model.initial')
 const {ProductRoute} = require('./module/product/product.routes')
 const {BasketRoute} = require('./module/basket/basket.routes')
 const {authRoute} = require('./module/auth/auth.routes')
+const { PaymentRoute } = require('./module/payment/payment.routes')
 
 
 
@@ -21,6 +22,7 @@ async function main() {
     app.use('/auth',authRoute)
     app.use('/product',ProductRoute)
     app.use('/basket',BasketRoute)
+    app.use('/payment',PaymentRoute)
 
 
 

@@ -7,9 +7,9 @@ const Order = sequelize.define("order", {
     status: {type: DataTypes.ENUM(...Object.values(OrderStatus)), defaultValue: OrderStatus.Pending},
     address: {type: DataTypes.TEXT},
     userId: {type: DataTypes.INTEGER},
-    total_amount: {type: DataTypes.DECIMAL(4,2)},
-    final_amount: {type: DataTypes.DECIMAL(4,2)},
-    discount_amount: {type: DataTypes.DECIMAL(4,2)},
+    total_amount: {type: DataTypes.DECIMAL(10,2)},
+    final_amount: {type: DataTypes.DECIMAL(10,2)},
+    discount_amount: {type: DataTypes.DECIMAL(10,2)},
     reason: {type: DataTypes.STRING, allowNull: true},
 }, {
     modelName: "order",
