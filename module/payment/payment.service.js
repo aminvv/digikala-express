@@ -2,6 +2,9 @@ const { getUserBasketById } = require("../basket/service/basket.service");
 const { Payment } = require("../payment/model/payment.model");
 const { Order, OrderItems } = require("../order/model/order.model");
 const { OrderStatus } = require("../../common/constant/order.constant");
+const { zarinpalRequest, zarinpalVerify } = require("../zarinpal/zarinpal.service");
+const createHttpError = require("http-errors");
+const { Basket } = require("../basket/model/basket.model");
 
 async function paymentBasket(req, res, next) {
     try {
@@ -9,7 +12,7 @@ async function paymentBasket(req, res, next) {
         const { basket, totalAmount, totalDiscount, finalAmount, } = await getUserBasketById(userId)
         const payment = await Payment.create({
             userId,
-            amount:finalAmount,
+            amount: finalAmount,
             status: false,
         })
 
@@ -23,8 +26,7 @@ async function paymentBasket(req, res, next) {
             address: "azarbyjangarbi - urmia - alamemajleci - 123",
         })
         payment.orderId = order.id
-        await payment.save()
-
+        
         let orderList = []
         for (const item of basket) {
             let items = []
@@ -47,20 +49,23 @@ async function paymentBasket(req, res, next) {
                     }
                 })
             } else {
-                items=[{
-                    orderId:order.id,
-                    productId:item?.id,
-                    count:item?.count
+                items = [{
+                    orderId: order.id,
+                    productId: item?.id,
+                    count: item?.count
                 }]
             }
             orderList.push(...items)
         }
 
-
+        
         await OrderItems.bulkCreate(orderList)
-
+        const amount = Math.ceil(payment?.amount);
+        const result = await zarinpalRequest(amount, req.user)
+        payment.Authority=result?.Authority
+        await payment.save()
         return res.json({
-            paymentUrl:"https://zarinpal.com/payment"
+            result
         })
 
     } catch (error) {
@@ -70,7 +75,41 @@ async function paymentBasket(req, res, next) {
 }
 
 
+async function paymentVerify(req, res, next) {
+    try {
+        const { Authority, Status } = req.query
+        if (Status === "OK" && Authority) {
+            const payment = await payment.findOne({ where: { Authority } })
+            if (!payment) {
+                throw createHttpError(404, 'payment not found')
+            }
+            const result = await zarinpalVerify(payment?.amount, Authority)
+            if (result) {
+                payment.status = true
+                payment.refId = result?.ref_id
+                const order = await Order.findByPk(payment?.orderId)
+                order.status = OrderStatus.InProcess
+                await order.save()
+                await payment.save()
+                await Basket.destroy({where:{id:payment?.userId}})
+                if (!order) {
+                    throw createHttpError(404, 'order not found')
+                }
+                res.redirect("https://frontenddomain.compayment?status=success")
+            }else{
+                await Order.destroy({where:{id:payment?.orderId}})
+                await Payment.destroy({where:{id:payment?.if}})
+            }
+        }
+
+        res.redirect("https://frontenddomain.compayment?status=failure")
+    } catch (error) {
+        res.redirect("https://frontenddomain.compayment?status=failure")
+    }
+}
+
 
 module.exports = {
-    paymentBasket
+    paymentBasket,
+    paymentVerify
 }
