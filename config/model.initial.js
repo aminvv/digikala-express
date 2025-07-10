@@ -53,12 +53,10 @@ async function initDataBase() {
 
 
 
-    Role.hasMany(RolePermission, { foreignKey: "roleId", sourceKey: "id", as: "permissions" })
-    Permission.hasMany(RolePermission, { foreignKey: "permissionId", sourceKey: "id", as: "roles" })
-
-    RolePermission.belongsTo(Role,{foreignKey:"roleId",targetKey:"id"})
-    RolePermission.belongsTo(Permission,{foreignKey:"permissionId",targetKey:"id"})
-
+    Role.hasMany(RolePermission, {foreignKey: "roleId", sourceKey: "id", as: "permissions"});
+    Permission.hasMany(RolePermission, {foreignKey: "permissionId", sourceKey: "id", as: "roles"});
+    RolePermission.belongsTo(Role, {foreignKey: "roleId", targetKey: "id"});
+    RolePermission.belongsTo(Permission, {foreignKey: "permissionId", targetKey: "id"});
 
 
 

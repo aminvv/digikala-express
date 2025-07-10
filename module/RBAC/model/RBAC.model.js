@@ -17,8 +17,8 @@ const Permission = sequelize.define("permission", {
 
 const RolePermission = sequelize.define("rolePermission", {
     id: {type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true},
-    roleId: {type: DataTypes.STRING, allowNull: false},
-    permissionId: {type: DataTypes.STRING,allowNull:false},
+    roleId: {type: DataTypes.INTEGER, allowNull: false},
+    permissionId: {type: DataTypes.INTEGER,allowNull:false},
 }, { modelName: "rolePermission",timestamps: false,});
 
 
