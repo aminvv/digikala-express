@@ -43,16 +43,11 @@ const createProductValidation = validate({
     })
 })
 
-const orderStatusReasonValidation = validation({
-    body: Joi.object({
-        reason: Joi.string().required(),
-    })
-})
+
 
 
 
 
 module.exports = {
-    createProductValidation,
-    orderStatusReasonValidation
+    createProductValidation
 }

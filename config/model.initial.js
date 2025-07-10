@@ -5,6 +5,7 @@ const { Product, ProductDetail, ProductColor, ProductSize } = require("../module
 const { Otp, User } = require("../module/user/model/user.model");
 const sequelize = require("./sequelize.config");
 const { Payment } = require("../module/payment/model/payment.model");
+const { Role, RolePermission, Permission } = require("../module/RBAC/model/RBAC.model");
 
 async function initDataBase() {
     Product.hasMany(ProductDetail, { foreignKey: "productId", sourceKey: "id", as: "details" });
@@ -49,6 +50,16 @@ async function initDataBase() {
     User.hasMany(Payment, { foreignKey: "userId", sourceKey: "id", as: "payments" })
     Order.hasOne(Payment, { foreignKey: { name: "orderId", onDelete: "CASCADE" }, sourceKey: "id", as: "payment" });
     Payment.belongsTo(Order, { foreignKey: { name: "orderId", onDelete: "CASCADE" }, targetKey: "id", as: "order" });
+
+
+
+    Role.hasMany(RolePermission, { foreignKey: "roleId", sourceKey: "id", as: "permissions" })
+    Permission.hasMany(RolePermission, { foreignKey: "permissionId", sourceKey: "id", as: "roles" })
+
+    RolePermission.belongsTo(Role,{foreignKey:"roleId",targetKey:"id"})
+    RolePermission.belongsTo(Permission,{foreignKey:"permissionId",targetKey:"id"})
+
+
 
 
 }
