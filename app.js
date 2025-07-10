@@ -7,6 +7,7 @@ const {ProductRoute} = require('./module/product/product.routes')
 const {BasketRoute} = require('./module/basket/basket.routes')
 const {authRoute} = require('./module/auth/auth.routes')
 const { PaymentRoute } = require('./module/payment/payment.routes')
+const { OrderRoute } = require('./module/order/order.routes')
 
 
 
@@ -23,6 +24,7 @@ async function main() {
     app.use('/product',ProductRoute)
     app.use('/basket',BasketRoute)
     app.use('/payment',PaymentRoute)
+    app.use('/Order',OrderRoute)
 
 
 

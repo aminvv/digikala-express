@@ -40,7 +40,11 @@ async function initDataBase() {
     User.hasMany(Order, { foreignKey: "userId", sourceKey: "id", as: "orders" });
     OrderItems.belongsTo(Order, { foreignKey: "orderId", targetKey: "id" });
 
-    
+    OrderItems.belongsTo(Product, { foreignKey: "productId", targetKey: "id", as: "product" })
+    OrderItems.belongsTo(ProductColor, { foreignKey: "colorId", targetKey: "id", as: "color" })
+    OrderItems.belongsTo(ProductSize, { foreignKey: "sizeId", targetKey: "id", as: "size" })
+
+
 
     User.hasMany(Payment, { foreignKey: "userId", sourceKey: "id", as: "payments" })
     Order.hasOne(Payment, { foreignKey: { name: "orderId", onDelete: "CASCADE" }, sourceKey: "id", as: "payment" });
