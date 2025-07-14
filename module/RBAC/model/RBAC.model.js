@@ -22,8 +22,12 @@ const RolePermission = sequelize.define("rolePermission", {
 }, { modelName: "rolePermission",timestamps: false,});
 
 
+
+
+
 module.exports = {
 Role,
 Permission,
 RolePermission,
+UserPermission
 };

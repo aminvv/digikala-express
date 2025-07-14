@@ -4,6 +4,7 @@ const sequelize = require("../../../config/sequelize.config");
 const User=sequelize.define('user',{
     id:{type:DataTypes.INTEGER,primaryKey:true,autoIncrement:true},
     fullname:{type:DataTypes.STRING,allowNull:true},
+    roleId:{type:DataTypes.INTEGER,allowNull:true},
     mobile:{type:DataTypes.STRING,allowNull:false},
     otpId:{type:DataTypes.INTEGER,allowNull:true},
 },{

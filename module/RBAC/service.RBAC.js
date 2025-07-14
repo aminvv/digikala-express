@@ -1,6 +1,6 @@
 
 const createHttpError = require("http-errors")
-const { Role, Permission, RolePermission } = require("./model/RBAC.model")
+const { Role, Permission, RolePermission, UserPermission } = require("./model/RBAC.model")
 const { Op } = require("@sequelize/core")
 
 async function createRole(req, res, next) {
@@ -57,7 +57,7 @@ async function createPermission(req, res, next) {
 
 async function assignPermissionToRole (req, res, next) {
     try {
-        let {roleId, permissions = []} = req.body;
+        let {roleId, permissions = [],} = req.body;
         const role = await Role.findOne({where: {id: roleId}});
         if (!role) throw createHttpError(404, "not found role ");
         if (permissions?.length > 0) {
@@ -81,8 +81,10 @@ async function assignPermissionToRole (req, res, next) {
 
 
 
+
 module.exports = {
     createPermission,
     createRole,
-    assignPermissionToRole
+    assignPermissionToRole,
+
 }
